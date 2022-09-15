@@ -14,13 +14,13 @@ public class Team {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 	
 	@Column(name = "name")
 	private String name;
 	
 	@Column(name = "trophies")
-	private int trophies;
+	private Integer trophies;
 	
 	@ManyToOne
 	private Engine engine;
@@ -34,10 +34,10 @@ public class Team {
 		this.engine = new Engine("", "");
 	}
 	
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getName() {

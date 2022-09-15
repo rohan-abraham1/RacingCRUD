@@ -1,11 +1,18 @@
 package com.example.demo.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "engine")
@@ -20,6 +27,10 @@ public class Engine {
 	
 	@Column(name = "hq_location")
 	private String hqLocation;
+	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "engine")
+	@JsonIgnore
+	 private Set<Team> teams = new HashSet<>();
 	
 	public Engine() {
 	}
@@ -50,5 +61,11 @@ public class Engine {
 	}
 	public void setHqLocation(String hqLocation) {
 		this.hqLocation = hqLocation;
+	}
+	public Set<Team> getTeams() {
+		return teams;
+	}
+	public void setTeams(Set<Team> teams) {
+		this.teams = teams;
 	}
 }

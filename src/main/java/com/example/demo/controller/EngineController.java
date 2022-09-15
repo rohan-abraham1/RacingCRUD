@@ -13,49 +13,39 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Engine;
-import com.example.demo.repository.EngineRepository;
+import com.example.demo.service.EngineServiceInterface;
 
 @RestController
 @RequestMapping("/engine/")
 public class EngineController {
-	
-	@Autowired
-	private EngineRepository engineRepository;
-	
-	@GetMapping("allEngines")
-	public List<Engine> getAll(){
-		return engineRepository.findAll();
-	}
 
+	@Autowired
+	private EngineServiceInterface engineServiceInterface;
+
+	@GetMapping("allEngines")
+	public List<Engine> getAll() {
+		return engineServiceInterface.getAllEngines();
+	}
+	
 	@GetMapping
 	@RequestMapping("findEngine/{id}")
-	public ResponseEntity<Engine> get(@PathVariable Long id) 
-		throws ResourceNotFoundException {
-		Engine engine = engineRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Engine not found for this id :: " + id));
-		return ResponseEntity.ok().body(engine);
+	public ResponseEntity<Engine> get(@PathVariable Long id) throws ResourceNotFoundException {
+		return engineServiceInterface.getEngineId(id);
 	}
-	
-	@RequestMapping(value="postEngine", method = RequestMethod.POST)
+
+	@RequestMapping(value = "postEngine", method = RequestMethod.POST)
 	public Engine create(@RequestBody Engine engine) {
-		return engineRepository.save(engine);
+		return engineServiceInterface.saveEngine(engine);
 	}
-	
-	@RequestMapping(value="deleteEngine/{id}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable Long id) 
-			throws ResourceNotFoundException {
-		Engine engine = engineRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Engine not found for this id :: " + id));
-				engineRepository.delete(engine);
-	}
-	
+
+	@RequestMapping(value = "deleteEngine/{id}", method = RequestMethod.DELETE)
+	public void delete(@PathVariable Long id) throws ResourceNotFoundException {
+		engineServiceInterface.deleteTheEngine(id);
+	}	
+
 	@RequestMapping(value = "updateEngine/{id}", method = RequestMethod.PUT)
-	public Engine update(@RequestBody Engine engine,@PathVariable Long id) 
-			throws ResourceNotFoundException{
-		Engine existingEngine = engineRepository.findById(id)
-		.orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + id));
-		existingEngine.setName(engine.getName());
-		existingEngine.setHqLocation(engine.getHqLocation());
-		return engineRepository.save(existingEngine);
+	public Engine updateEngine(@RequestBody Engine engine, @PathVariable Long id) throws ResourceNotFoundException {
+		return engineServiceInterface.updateTheEngine(engine, id);
 	}
+
 }

@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,58 +13,44 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.Engine;
 import com.example.demo.model.Team;
-import com.example.demo.repository.TeamRepository;
+import com.example.demo.service.TeamServiceInterface;
 
 @RestController
 public class TeamController {
 
 	@Autowired
-	private TeamRepository teamRepository;
+	private TeamServiceInterface teamServiceInterface;
 
-	@GetMapping("/engine/{engine_id}/team/allTeamsById")
-	public List<Team> getAll(@PathVariable Long engine_id) {
-		List<Team> teams = new ArrayList<>();
-		teamRepository.findByEngineId(engine_id).forEach(teams::add);
-		return teams;
+	@GetMapping("/engine/{engineId}/team/allTeamsById")
+	public Set<Team> getAll(@PathVariable Long engineId) {
+		return teamServiceInterface.getTeamByEngineID(engineId);
 	}
 
 	@GetMapping("allTeams")
 	public List<Team> getAll() {
-		return teamRepository.findAll();
+		return teamServiceInterface.getAllTeams();
 	}
 
 	@GetMapping
 	@RequestMapping("findTeam/{id}")
-	public ResponseEntity<Team> get(@PathVariable Long id) 
-			throws ResourceNotFoundException {
-		Team team = teamRepository.findById(id)
-		          .orElseThrow(() -> new ResourceNotFoundException("Team not found for this id :: " + id));
-		return ResponseEntity.ok().body(team);	}
-
-	@RequestMapping(value = "/engine/{engine_id}/team/postTeam", method = RequestMethod.POST)
-	public Team create(@RequestBody Team team, @PathVariable Long engine_id) {
-		team.setEngine(new Engine(engine_id, "", ""));
-		return teamRepository.save(team);
+	public ResponseEntity<Team> get(@PathVariable Long id) throws ResourceNotFoundException {
+		return teamServiceInterface.getTeamId(id);
 	}
 
-	@RequestMapping(value = "deleteTeam/{id}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable Long id) 
-			throws ResourceNotFoundException {
-		Team team = teamRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Team not found for this id :: " + id));
-		teamRepository.delete(team);
+	@RequestMapping(value = "/engine/{engineId}/team/postTeam", method = RequestMethod.POST)
+	public Team createTeam(@PathVariable Long engineId, @RequestBody Team team) throws ResourceNotFoundException {
+		return teamServiceInterface.saveTeam(engineId, team);
 	}
 
-	@RequestMapping(value = "/engine/{engine_id}/team/updateTeam/{id}", method = RequestMethod.PUT)
-	public Team update(@RequestBody Team team, @PathVariable Long engine_id, @PathVariable Long id) 
-			throws ResourceNotFoundException {
-		Team existingTeam = teamRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Team not found for this id :: " + id));
-		existingTeam.setName(team.getName());
-		existingTeam.setTrophies(team.getTrophies());
-		team.setEngine(new Engine(engine_id, "", ""));
-		return teamRepository.save(existingTeam);
+	@RequestMapping(value = "/team/deleteTeam/{id}", method = RequestMethod.DELETE)
+	public void deleteTeam(@PathVariable Long id) throws ResourceNotFoundException {
+		teamServiceInterface.deleteTheTeam(id);
+	}
+
+	@RequestMapping(value = "/engine/{engineId}/team/updateTeam/{id}", method = RequestMethod.PUT)
+	public Team updateTeam(@PathVariable(value = "engineId") Long engineId, @PathVariable(value = "id") Long id,
+			@RequestBody Team teamRequest) throws ResourceNotFoundException {
+		return teamServiceInterface.updateTheTeam(engineId, id, teamRequest);
 	}
 }
