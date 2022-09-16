@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +24,7 @@ public class TeamController {
 	private TeamServiceInterface teamServiceInterface;
 
 	@GetMapping("/engine/{engineId}/team/allTeamsById")
-	public Set<Team> getAll(@PathVariable Long engineId) {
+	public List<Team> getAll(@PathVariable Long engineId) throws ResourceNotFoundException {
 		return teamServiceInterface.getTeamByEngineID(engineId);
 	}
 

@@ -1,7 +1,7 @@
 package com.example.demo.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +30,7 @@ public class Engine {
 	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "engine")
 	@JsonIgnore
-	 private Set<Team> teams = new HashSet<>();
+	 private List<Team> teams = new ArrayList<>();
 	
 	public Engine() {
 	}
@@ -62,10 +62,10 @@ public class Engine {
 	public void setHqLocation(String hqLocation) {
 		this.hqLocation = hqLocation;
 	}
-	public Set<Team> getTeams() {
+	public List<Team> getTeams() {
 		return teams;
 	}
-	public void setTeams(Set<Team> teams) {
+	public void setTeams(List<Team> teams) {
 		this.teams = teams;
 	}
 }

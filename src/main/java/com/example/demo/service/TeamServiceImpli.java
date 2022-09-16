@@ -1,14 +1,13 @@
 package com.example.demo.service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.DTO.TeamDtoGet;
 import com.example.demo.DTO.TeamDtoGetAll;
+import com.example.demo.DTO.TeamDtoGetAllByEngineId;
 import com.example.demo.DTO.TeamDtoPost;
 import com.example.demo.DTO.TeamDtoUpdate;
 import com.example.demo.exception.ResourceNotFoundException;
@@ -26,12 +25,12 @@ public class TeamServiceImpli implements TeamServiceInterface{
 	@Autowired
 	private EngineRepository engineRepository;
 
-	public Set<Team> getTeamByEngineID(Long engineId) {
-		Optional<Engine> engine = engineRepository.findById(engineId);
-		if(engine.isPresent()) {
-			return engine.get().getTeams();
-		}
-		return null;
+	public List<Team> getTeamByEngineID(Long engineId) throws ResourceNotFoundException {
+		Engine engine = engineRepository.findById(engineId)
+				.orElseThrow(() -> new ResourceNotFoundException("Engine not found for this id : " + engineId));
+		TeamDtoGetAllByEngineId teamDtoGetAllByEngineId = new TeamDtoGetAllByEngineId();
+		teamDtoGetAllByEngineId.setTeamInEngine(engine.getTeams());
+		return teamDtoGetAllByEngineId.getTeamInEngine();
 	}
 
 	public List<Team> getAllTeams() {
