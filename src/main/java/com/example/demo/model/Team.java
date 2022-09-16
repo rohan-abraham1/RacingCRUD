@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "team")
 public class Team {
@@ -23,6 +25,7 @@ public class Team {
 	private Integer trophies;
 	
 	@ManyToOne
+	@JsonIgnore
 	private Engine engine;
 	
 	public Team() {

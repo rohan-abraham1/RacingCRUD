@@ -3,9 +3,12 @@ package com.example.demo.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.DTO.EngineDtoGet;
+import com.example.demo.DTO.EngineDtoGetAll;
+import com.example.demo.DTO.EngineDtoPost;
+import com.example.demo.DTO.EngineDtoUpdate;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Engine;
 import com.example.demo.repository.EngineRepository;
@@ -17,16 +20,25 @@ public class EngineServiceImpli implements EngineServiceInterface {
 	private EngineRepository engineRepository;
 	
 	public List<Engine> getAllEngines (){
-		return engineRepository.findAll();
+		EngineDtoGetAll engineDto = new EngineDtoGetAll();
+		engineDto.setEngineList(engineRepository.findAll());
+		return (engineDto.getEngineList());
 	}
 	
-	public ResponseEntity<Engine> getEngineId (Long id) throws ResourceNotFoundException {
+	public EngineDtoGet getEngineId (Long id) throws ResourceNotFoundException {
 		Engine engine = engineRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Engine not found for this id : " + id));
-		return ResponseEntity.ok().body(engine);
+		EngineDtoGet engineDto = new EngineDtoGet();
+		engineDto.setId(engine.getId());
+		engineDto.setName(engine.getName());
+		engineDto.setHqLocation(engine.getHqLocation());
+		return engineDto;
 	}
 
-	public Engine saveEngine(Engine engine) {
+	public Engine saveEngine(EngineDtoPost engineDto) {
+		Engine engine = new Engine();
+		engine.setName(engineDto.getName());
+		engine.setHqLocation(engineDto.getHqLocation());
 		return engineRepository.save(engine);
 	}
 	
@@ -36,11 +48,11 @@ public class EngineServiceImpli implements EngineServiceInterface {
 		  engineRepository.delete(engine);
 	}
 	
-	public Engine updateTheEngine(Engine engine, Long id) throws ResourceNotFoundException {
+	public Engine updateTheEngine(EngineDtoUpdate engineDto, Long id) throws ResourceNotFoundException {
 		Engine existingEngine = engineRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id : " + id));
-		existingEngine.setName(engine.getName());
-		existingEngine.setHqLocation(engine.getHqLocation());
+		existingEngine.setName(engineDto.getName());
+		existingEngine.setHqLocation(engineDto.getHqLocation());
 		return engineRepository.save(existingEngine);
 	}
 }

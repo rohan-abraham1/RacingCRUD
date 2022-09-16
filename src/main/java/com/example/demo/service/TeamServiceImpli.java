@@ -5,9 +5,12 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.DTO.TeamDtoGet;
+import com.example.demo.DTO.TeamDtoGetAll;
+import com.example.demo.DTO.TeamDtoPost;
+import com.example.demo.DTO.TeamDtoUpdate;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Engine;
 import com.example.demo.model.Team;
@@ -32,20 +35,29 @@ public class TeamServiceImpli implements TeamServiceInterface{
 	}
 
 	public List<Team> getAllTeams() {
-		return teamRepository.findAll();
+		TeamDtoGetAll teamDtoGetAll = new TeamDtoGetAll();
+		teamDtoGetAll.setTeamList(teamRepository.findAll());
+		return (teamDtoGetAll.getTeamList());
 	}
 
-	public ResponseEntity<Team> getTeamId(Long id) throws ResourceNotFoundException {
+	public TeamDtoGet getTeamId(Long id) throws ResourceNotFoundException {
 		Team team = teamRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Team not found for this id : " + id));
-		return ResponseEntity.ok().body(team);
+		TeamDtoGet teamDto = new TeamDtoGet();
+		teamDto.setId(team.getId());
+		teamDto.setName(team.getName());
+		teamDto.setTrophies(team.getTrophies());
+		return teamDto;
 	}
 
-	public Team saveTeam(Long engineId, Team team) throws ResourceNotFoundException {
-		return engineRepository.findById(engineId).map(engine -> {
-			team.setEngine(engine);
-			return teamRepository.save(team);
-		}).orElseThrow(() -> new ResourceNotFoundException("Engine Id " + engineId + " not found"));
+	public Team saveTeam(Long engineId, TeamDtoPost teamDto) throws ResourceNotFoundException {
+		Engine engine = engineRepository.findById(engineId)
+					.orElseThrow(() -> new ResourceNotFoundException("Engine not found for this id : " + engineId));
+		Team team = new Team();
+		team.setEngine(engine);
+		team.setName(teamDto.getName());
+		team.setTrophies(teamDto.getTrophies());
+		return teamRepository.save(team);
 	}
 
 	public void deleteTheTeam(Long id) throws ResourceNotFoundException {
@@ -54,16 +66,15 @@ public class TeamServiceImpli implements TeamServiceInterface{
 		teamRepository.delete(team);
 	}
 
-	public Team updateTheTeam(Long engineId, Long id, Team teamRequest) throws ResourceNotFoundException {
+	public Team updateTheTeam(Long engineId, Long id, TeamDtoUpdate teamDto) throws ResourceNotFoundException {
 		if (!engineRepository.existsById(engineId)) {
 			throw new ResourceNotFoundException("Engine Id " + engineId + " not found");
 		}
-
-		return teamRepository.findById(id).map(team -> {
-			team.setName(teamRequest.getName());
-			team.setTrophies(teamRequest.getTrophies());
-			return teamRepository.save(team);
-		}).orElseThrow(() -> new ResourceNotFoundException("Team Id " + id + "not found"));
+		Team team = teamRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Team Id " + id + "not found"));
+		team.setName(teamDto.getName());
+		team.setTrophies(teamDto.getTrophies());
+		return teamRepository.save(team);
 	}
 
 }
