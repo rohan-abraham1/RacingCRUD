@@ -14,5 +14,5 @@ public interface TeamServiceInterface {
 	public TeamDtoGet getTeamId(Long id) throws ResourceNotFoundException;
 	public Team saveTeam(Long engineId, TeamDtoPost teamDto) throws ResourceNotFoundException;
 	public void deleteTheTeam(Long id) throws ResourceNotFoundException;
-	public Team updateTheTeam(Long engineId, Long id, TeamDtoUpdate teamDto) throws ResourceNotFoundException;
+	public Team updateTheTeam(Long id, TeamDtoUpdate teamDto) throws ResourceNotFoundException;
 }

@@ -65,10 +65,10 @@ public class TeamServiceImpli implements TeamServiceInterface{
 		teamRepository.delete(team);
 	}
 
-	public Team updateTheTeam(Long engineId, Long id, TeamDtoUpdate teamDto) throws ResourceNotFoundException {
-		if (!engineRepository.existsById(engineId)) {
-			throw new ResourceNotFoundException("Engine Id " + engineId + " not found");
-		}
+	public Team updateTheTeam(Long id, TeamDtoUpdate teamDto) throws ResourceNotFoundException {
+//		if (!engineRepository.existsById(engineId)) {
+//			throw new ResourceNotFoundException("Engine Id " + engineId + " not found");
+//		}
 		Team team = teamRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Team Id " + id + "not found"));
 		team.setName(teamDto.getName());

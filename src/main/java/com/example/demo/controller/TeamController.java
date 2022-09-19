@@ -49,9 +49,9 @@ public class TeamController {
 		teamServiceInterface.deleteTheTeam(id);
 	}
 
-	@RequestMapping(value = "/engine/{engineId}/team/updateTeam/{id}", method = RequestMethod.PUT)
-	public Team updateTeam(@PathVariable(value = "engineId") Long engineId, @PathVariable(value = "id") Long id,
+	@RequestMapping(value = "/team/updateTeam/{id}", method = RequestMethod.PUT)
+	public Team updateTeam(@PathVariable(value = "id") Long id,
 			@RequestBody TeamDtoUpdate TeamDto) throws ResourceNotFoundException {
-		return teamServiceInterface.updateTheTeam(engineId, id, TeamDto);
+		return teamServiceInterface.updateTheTeam(id, TeamDto);
 	}
 }

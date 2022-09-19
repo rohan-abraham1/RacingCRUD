@@ -50,7 +50,7 @@ public class EngineServiceImpli implements EngineServiceInterface {
 	
 	public Engine updateTheEngine(EngineDtoUpdate engineDto, Long id) throws ResourceNotFoundException {
 		Engine existingEngine = engineRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id : " + id));
+				.orElseThrow(() -> new ResourceNotFoundException("Engine not found for this id : " + id));
 		existingEngine.setName(engineDto.getName());
 		existingEngine.setHqLocation(engineDto.getHqLocation());
 		return engineRepository.save(existingEngine);
